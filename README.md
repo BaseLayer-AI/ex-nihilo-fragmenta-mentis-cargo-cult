@@ -5,3 +5,6 @@ Part of the [Ex Nihilo: Fragmenta Mentis (Out of Nothing: Fragments of the Mind)
 ```
 nix run "https://flakehub.com/f/BaseLayer-AI/ex-nihilo-fragmenta-mentis-cargo-cult/*"
 ```
+```
+nix run "https://flakehub.com/f/BaseLayer-AI/ex-nihilo-fragmenta-mentis-cargo-cult/*"#cargo-cult
+```
