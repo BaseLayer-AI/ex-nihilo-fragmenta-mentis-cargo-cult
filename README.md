@@ -8,3 +8,5 @@ nix run "https://flakehub.com/f/BaseLayer-AI/ex-nihilo-fragmenta-mentis-cargo-cu
 ```
 nix run "https://flakehub.com/f/BaseLayer-AI/ex-nihilo-fragmenta-mentis-cargo-cult/*"#cargo-cult
 ```
+
+<https://github.com/BaseLayer-AI/ex-nihilo-fragmenta-mentis-cargo-cult/actions/workflows/ci.yml>
