@@ -68,3 +68,4 @@ To break the cult, the developer must move from passive consumption to active in
 
 In conclusion, `cargo new` is a double-edged sword of modern tooling. It is a masterpiece of developer experience that removes the friction of starting, but it also creates a vacuum where understanding can be replaced by imitation. To avoid becoming a Cargo Cult programmer, one must treat the output of the command not as a finished ritual, but as a blueprint. The goal of a programmer is not to mimic the appearance of a project, but to master the logic that makes the project function. Only by looking beneath the surface of the "magic" can a developer transition from a follower of rituals to an architect of systems.
 
+<https://nix-ontouchstart.github.io/nix-ontouchstart-llama_cpp-sessions/2026-11-01_15-06-34_conv_f2e60cbc_what_is_cargo_cult_>
