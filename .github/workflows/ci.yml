@@ -15,8 +15,8 @@ jobs:
       run: nix run
     - name: nix run "https://flakehub.com/f/BaseLayer-AI/ex-nihilo-fragmenta-mentis-cargo-cult/*"#cargo-cult
       run: bash -c 'nix run "https://flakehub.com/f/BaseLayer-AI/ex-nihilo-fragmenta-mentis-cargo-cult/*"#cargo-cult'
-    - name: ls -l /tmp
-      run: ls -l /tmp
+    - name: ls -l /tmp/*
+      run: ls -l /tmp/*
 
   aarch64-linux:
     runs-on: ubuntu-26.04-arm
@@ -32,8 +32,8 @@ jobs:
       run: nix run
     - name: nix run "https://flakehub.com/f/BaseLayer-AI/ex-nihilo-fragmenta-mentis-cargo-cult/*"#cargo-cult
       run: bash -c 'nix run "https://flakehub.com/f/BaseLayer-AI/ex-nihilo-fragmenta-mentis-cargo-cult/*"#cargo-cult'
-    - name: ls -l /tmp
-      run: ls -l /tmp
+    - name: ls -l /tmp/*
+      run: ls -l /tmp/*
 
   x86_64-linux:
     runs-on: ubuntu-26.04
@@ -49,5 +49,5 @@ jobs:
       run: nix run
     - name: nix run "https://flakehub.com/f/BaseLayer-AI/ex-nihilo-fragmenta-mentis-cargo-cult/*"#cargo-cult
       run: bash -c 'nix run "https://flakehub.com/f/BaseLayer-AI/ex-nihilo-fragmenta-mentis-cargo-cult/*"#cargo-cult'
-    - name: ls -l /tmp
-      run: ls -l /tmp
+    - name: ls -l /tmp/*
+      run: ls -l /tmp/*
