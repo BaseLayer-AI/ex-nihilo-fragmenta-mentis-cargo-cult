@@ -51,6 +51,7 @@ TMP_DIR=$( ${pkgs.coreutils}/bin/mktemp -d )
 # Set a trap to ensure the directory is removed on exit, no matter what happens
 trap 'rm -rf "$TMP_DIR"' EXIT
 
+# Non-cargo-cult version without magic
 (
   cd "$TMP_DIR"
   cat > Cargo.toml <<'EOF'
@@ -73,6 +74,7 @@ EOF
 )
 
 # keep the final binary
+# source code will be deleted after exit
 cp -p $TMP_DIR/target/release/hello .
 ./hello
         '';};
