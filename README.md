@@ -244,4 +244,58 @@ We have made four specific changes to move the script from a "fragile" state to 
 *   **What:** Added `set -e` at the top of the script.
 *   **Why:** This ensures the script halts immediately if any command fails (e.g., if `cargo build` fails). Without this, the script would try to continue the "ritual" even if the previous step crashed, leading to confusing output.
 
+```nix
+{
+  description = "Cargo Cult";
+  inputs = { nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*"; };
+
+  outputs = { self, nixpkgs }:
+    let
+      aarch64-darwin = import nixpkgs { system = "aarch64-darwin"; };
+      aarch64-linux = import nixpkgs { system = "aarch64-linux"; };
+      x86_64-linux = import nixpkgs { system = "x86_64-linux"; };
+
+      readme = { pkgs } : pkgs.writeTextFile { name = "readme"; executable = true; destination = "/bin/readme";
+        text = ''#!${pkgs.stdenv.shell}
+cat ${self}/README.md
+        '';};
+
+      cargo-cult = { pkgs } : pkgs.writeTextFile { name = "cargo-cult"; executable = true; destination = "/bin/cargo-cult";
+        text = ''#!${pkgs.stdenv.shell}
+set -e
+
+# Create a unique temporary directory using Nix coreutils
+TMP_DIR=$( ${pkgs.coreutils}/bin/mktemp -d )
+
+# Run the ritual in a subshell to isolate directory changes
+(
+  cd "$TMP_DIR"
+  ${pkgs.cargo}/bin/cargo new --bin hello --verbose
+  cd hello
+  pwd
+  # The Ritual
+  ls -lR .
+  cat -n Cargo.toml
+  cat -n src/main.rs
+  ${pkgs.cargo}/bin/cargo check --verbose
+  ${pkgs.cargo}/bin/cargo build --verbose
+  ${pkgs.cargo}/bin/cargo test  --verbose
+  ${pkgs.cargo}/bin/cargo run --verbose
+)
+
+# Cleanup: The subshell has finished, so we are back in the original directory
+rm -rf "$TMP_DIR"
+        '';};
+
+    in {
+      packages.aarch64-darwin.default = readme { pkgs = aarch64-darwin; };
+      packages.aarch64-linux.default = readme { pkgs = aarch64-linux; };
+      packages.x86_64-linux.default = readme { pkgs = x86_64-linux; };
+
+      packages.aarch64-darwin.cargo-cult = cargo-cult { pkgs = aarch64-darwin; };
+      packages.aarch64-linux.cargo-cult = cargo-cult { pkgs = aarch64-linux; };
+      packages.x86_64-linux.cargo-cult = cargo-cult { pkgs = x86_64-linux; };
+    };
+}
+```
 <https://nix-ontouchstart.github.io/nix-ontouchstart-llama_cpp-sessions/2026-11-02_15-34-05_conv_c5f05d70_mktemp>
