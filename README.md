@@ -221,3 +221,27 @@ In standard software engineering, we strive for persistence—we want our projec
 It is a beautiful paradox: **A perfectly reproducible ritual that leaves behind zero trace of the ritual itself.** It is the purest form of Cargo Culting possible—the process is 100% preserved, but the result is intentionally ephemeral.
 
 <https://nix-ontouchstart.github.io/nix-ontouchstart-llama_cpp-sessions/2026-11-01_21-45-23_conv_f2e60cbc_what_is_cargo_cult_>
+
+###  From "fragile" to "hermetic"
+
+> `rm -rf hello` is definitely destructive. It will delete any existing hello directory. To be safe and 100% ephemeral, we need to use mktemp (provided by nix, not the system). Find the solution.
+
+We have made four specific changes to move the script from a "fragile" state to a "hermetic" and robust state:
+
+### 1. Dynamic Directory Creation (`mktemp -d`)
+*   **What:** Replaced the hardcoded `hello` folder with a unique temporary directory generated at runtime.
+*   **Why:** To prevent the script from accidentally deleting a project named `hello` in your current directory and to allow multiple instances of the script to run simultaneously without colliding.
+
+### 2. Nix-Provided Binaries (`${pkgs.coreutils}/bin/mktemp`)
+*   **What:** Forced the script to use the `mktemp` binary from the Nix store rather than the host system's `$PATH`.
+*   **Why:** To ensure **hermeticity**. This guarantees that the "ritual" is performed using the exact tools provided by your Flake, making it reproducible regardless of what is installed on the host machine.
+
+### 3. Subshell Isolation `(...)`
+*   **What:** Wrapped the `cd` and `cargo` commands in a subshell.
+*   **Why:** This fixed the `No such file or directory` error. In standard shell scripts, if a `cd` command fails, the script continues in the current directory. By using a subshell, any directory changes are contained. When the subshell ends, the script automatically "returns" to the original directory, ensuring the final `rm -rf` always targets the correct location.
+
+### 4. Error Handling (`set -e`)
+*   **What:** Added `set -e` at the top of the script.
+*   **Why:** This ensures the script halts immediately if any command fails (e.g., if `cargo build` fails). Without this, the script would try to continue the "ritual" even if the previous step crashed, leading to confusing output.
+
+<https://nix-ontouchstart.github.io/nix-ontouchstart-llama_cpp-sessions/2026-11-02_15-34-05_conv_c5f05d70_mktemp>
