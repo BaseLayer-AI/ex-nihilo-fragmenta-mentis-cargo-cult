@@ -15,19 +15,29 @@ cat ${self}/README.md
 
       cargo-cult = { pkgs } : pkgs.writeTextFile { name = "cargo-cult"; executable = true; destination = "/bin/cargo-cult";
         text = ''#!${pkgs.stdenv.shell}
-${pkgs.cargo}/bin/cargo --version
-rm -rf hello
-${pkgs.cargo}/bin/cargo new --bin hello --verbose
-cd hello
-ls -lR .
-cat -n Cargo.toml
-cat -n src/main.rs
-${pkgs.cargo}/bin/cargo check --verbose
-${pkgs.cargo}/bin/cargo build --verbose
-${pkgs.cargo}/bin/cargo test  --verbose
-${pkgs.cargo}/bin/cargo run --verbose
-cd ..
-rm -rf hello
+set -e
+
+# Create a unique temporary directory using Nix coreutils
+TMP_DIR=$( ${pkgs.coreutils}/bin/mktemp -d )
+
+# Run the ritual in a subshell to isolate directory changes
+(
+  cd "$TMP_DIR"
+  ${pkgs.cargo}/bin/cargo new --bin hello --verbose
+  cd hello
+  pwd
+  # The Ritual
+  ls -lR .
+  cat -n Cargo.toml
+  cat -n src/main.rs
+  ${pkgs.cargo}/bin/cargo check --verbose
+  ${pkgs.cargo}/bin/cargo build --verbose
+  ${pkgs.cargo}/bin/cargo test  --verbose
+  ${pkgs.cargo}/bin/cargo run --verbose
+)
+
+# Cleanup: The subshell has finished, so we are back in the original directory
+rm -rf "$TMP_DIR"
         '';};
 
     in {
