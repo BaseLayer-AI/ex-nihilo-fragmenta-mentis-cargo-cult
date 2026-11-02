@@ -20,12 +20,16 @@ set -e
 # Create a unique temporary directory using Nix coreutils
 TMP_DIR=$( ${pkgs.coreutils}/bin/mktemp -d )
 
+# Set a trap to ensure the directory is removed on exit, no matter what happens
+trap 'rm -rf "$TMP_DIR"' EXIT
+
 # Run the ritual in a subshell to isolate directory changes
 (
   cd "$TMP_DIR"
   ${pkgs.cargo}/bin/cargo new --bin hello --verbose
   cd hello
   pwd
+
   # The Ritual
   ls -lR .
   cat -n Cargo.toml
@@ -35,9 +39,6 @@ TMP_DIR=$( ${pkgs.coreutils}/bin/mktemp -d )
   ${pkgs.cargo}/bin/cargo test  --verbose
   ${pkgs.cargo}/bin/cargo run --verbose
 )
-
-# Cleanup: The subshell has finished, so we are back in the original directory
-rm -rf "$TMP_DIR"
         '';};
 
     in {
