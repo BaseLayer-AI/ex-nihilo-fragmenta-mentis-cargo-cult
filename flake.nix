@@ -41,6 +41,42 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 )
         '';};
 
+      hello = { pkgs } : pkgs.writeTextFile { name = "cargo-cult"; executable = true; destination = "/bin/hello";
+        text = ''#!${pkgs.stdenv.shell}
+set -e
+
+# Create a unique temporary directory using Nix coreutils
+TMP_DIR=$( ${pkgs.coreutils}/bin/mktemp -d )
+
+# Set a trap to ensure the directory is removed on exit, no matter what happens
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+(
+  cd "$TMP_DIR"
+  cat > Cargo.toml <<'EOF'
+[package]
+name = "hello"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+EOF
+  mkdir src
+  cat > src/main.rs <<'EOF'
+fn main() {
+  println!("Hello, world!");
+}
+EOF
+  ${pkgs.cargo}/bin/cargo check --verbose
+  ${pkgs.cargo}/bin/cargo test  --verbose
+  ${pkgs.cargo}/bin/cargo build --release --verbose
+)
+
+# keep the final binary
+cp -p $TMP_DIR/target/release/hello .
+./hello
+        '';};
+
     in {
       packages.aarch64-darwin.default = readme { pkgs = aarch64-darwin; };
       packages.aarch64-linux.default = readme { pkgs = aarch64-linux; };
@@ -49,6 +85,10 @@ trap 'rm -rf "$TMP_DIR"' EXIT
       packages.aarch64-darwin.cargo-cult = cargo-cult { pkgs = aarch64-darwin; };
       packages.aarch64-linux.cargo-cult = cargo-cult { pkgs = aarch64-linux; };
       packages.x86_64-linux.cargo-cult = cargo-cult { pkgs = x86_64-linux; };
+
+      packages.aarch64-darwin.hello = hello { pkgs = aarch64-darwin; };
+      packages.aarch64-linux.hello = hello { pkgs = aarch64-linux; };
+      packages.x86_64-linux.hello = hello { pkgs = x86_64-linux; };
     };
 }
 
