@@ -91,6 +91,7 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 ### Add a non-cargo-cult version without magic
 
 ```nix
+
 {
   description = "Cargo Cult";
   inputs = { nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*"; };
@@ -161,15 +162,13 @@ fn main() {
   println!("Hello, world!");
 }
 EOF
-  ${pkgs.cargo}/bin/cargo check --verbose
-  ${pkgs.cargo}/bin/cargo test  --verbose
-  ${pkgs.cargo}/bin/cargo build --release --verbose
+  ${pkgs.cargo}/bin/cargo build --release --quiet
 )
 
-# keep the final binary
+# Run the final binary
 # source code will be deleted after exit
-cp -p $TMP_DIR/target/release/hello .
-./hello
+$TMP_DIR/target/release/hello 
+rm ./hello
         '';};
 
     in {
@@ -186,4 +185,5 @@ cp -p $TMP_DIR/target/release/hello .
       packages.x86_64-linux.hello = hello { pkgs = x86_64-linux; };
     };
 }
+
 ```

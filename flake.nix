@@ -71,10 +71,9 @@ EOF
   ${pkgs.cargo}/bin/cargo build --release --quiet
 )
 
-# keep the final binary
+# Run the final binary
 # source code will be deleted after exit
-cp -p $TMP_DIR/target/release/hello .
-./hello
+$TMP_DIR/target/release/hello
         '';};
 
     in {
