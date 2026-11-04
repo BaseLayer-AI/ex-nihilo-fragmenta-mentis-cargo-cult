@@ -68,9 +68,7 @@ fn main() {
   println!("Hello, world!");
 }
 EOF
-  ${pkgs.cargo}/bin/cargo check --verbose
-  ${pkgs.cargo}/bin/cargo test  --verbose
-  ${pkgs.cargo}/bin/cargo build --release --verbose
+  ${pkgs.cargo}/bin/cargo build --release --quiet
 )
 
 # keep the final binary
